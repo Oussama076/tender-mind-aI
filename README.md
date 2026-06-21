@@ -30,7 +30,7 @@ Follow these steps to transition from cloning the repository to running the full
 
 ### Step 1: Clone the Repository
 ```bash
-git clone <your-repository-url>
+git clone https://github.com/Oussama076/tender-mind-aI.git
 cd tender-mind-aI
 ```
 
