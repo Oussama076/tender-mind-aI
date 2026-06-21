@@ -1,32 +1,32 @@
-# TenderMind AI - Enterprise-Grade RFP Automation Suite
+# TenderMind AI - Enterprise RFP Automation Suite
 
-**TenderMind AI** is an enterprise-grade, multi-agent SaaS platform designed to automate Request for Proposal (RFP) analysis and proposal generation. Developed as a Capstone project for the Kaggle *5-Day AI Agents* course, it strictly adheres to a **Google-Maximalist** technology stack, demonstrating advanced interoperability, multi-agent orchestration, and human-in-the-loop security.
+An enterprise-grade RFP automation platform powered by a Multi-Agent Swarm (Analyst, Strategy, Legal, Writer) and Dual-RAG architecture. TenderMind AI intelligently analyzes technical requirements, evaluates strategic Go/No-Go alignment, and generates compliant proposals with strict Human-in-the-Loop governance.
 
 ## Architecture Overview
 
 The system operates on an end-to-end, fully decoupled data pipeline:
 
-1. **Acquisition (MCP Server):** A Model Context Protocol (MCP) server securely connects to Google Drive via a Service Account to ingest targeted RFP PDFs/Docx files.
-2. **Native Multimodal Extraction:** Utilizing Gemini 3.5 Flash, the raw documents are natively processed, preserving complex structural integrity (tables, lists, hierarchies) and converting them into clean Markdown.
+1. **Acquisition:** Securely connects to Google Drive via a Service Account (or accepts local uploads) to ingest targeted RFP PDFs/Docx files.
+2. **Native Multimodal Extraction:** Utilizing Gemini 1.5 Flash, the raw documents are natively processed, preserving complex structural integrity (tables, lists, hierarchies) and converting them into clean Markdown.
 3. **Dual-Vector Database Strategy:** To prevent hallucination and ensure data privacy, TenderMind AI enforces strict separation of context via two isolated ChromaDB collections, embedded using Google's `models/text-embedding-004`:
-   - **Client RFP Database:** Contains vectorized chunks of the target client's RFP.
-   - **Corporate Memory Database:** A dedicated collection containing historical company data, past proposals, and methodologies.
-4. **Agentic Pipeline:** Leverages a 3-agent orchestration system managed by a custom `ADKOrchestrator` using the pure `google-genai` SDK:
+   - **Client RFP Database:** Contains vectorized chunks of the specific client's RFP.
+   - **Corporate Memory Database:** A dedicated collection containing historical company data, past proposals, and corporate capabilities.
+4. **Agentic Pipeline (Swarm Architecture):** Leverages a 4-agent orchestration system managed by a custom `ADKOrchestrator` using the `google-genai` SDK:
    - **Analyst Agent:** Extracts technical specifications and mandatory requirements.
+   - **Strategy Agent:** Performs a strategic Go/No-Go alignment check by cross-referencing RFP requirements against the Corporate Memory.
    - **Legal/Compliance Agent:** Reviews extracted specs to flag potential compliance constraints and legal risks.
-   - **Bid Writer Agent:** Synthesizes the Analyst's specs and Legal Agent's risk report, querying Corporate Memory to generate a highly professional, structured proposal.
+   - **Bid Writer Agent:** Synthesizes the Analyst's specs, Strategy assessment, and Legal Agent's risk report to generate a highly professional, structured proposal.
 
 ## Prerequisites
 
-Before deploying the application, ensure you have the following installed and configured:
+Before deploying the application, ensure you have the following installed:
 - **Python 3.11+**
-- **Docker & Docker Compose**
+- **Node.js 18+** (for frontend execution without Docker)
+- **Docker & Docker Compose** (optional, for containerized execution)
 - **Google Cloud Service Account** (with Google Drive API enabled)
 - **Google Gemini API Key**
 
-## Quick Start Guide
-
-Follow these steps to transition from cloning the repository to running the full application locally.
+## Installation & Configuration
 
 ### Step 1: Clone the Repository
 ```bash
@@ -35,7 +35,7 @@ cd tender-mind-aI
 ```
 
 ### Step 2: Configure Environment Variables
-Create a `.env` file in the root directory and populate it with the following required variables:
+Create a `.env` file in the root directory and populate it:
 ```env
 GEMINI_API_KEY=your_gemini_api_key_here
 GOOGLE_APPLICATION_CREDENTIALS=credentials.json
@@ -43,35 +43,64 @@ DRIVE_RFP_FOLDER_ID=your_rfp_folder_id_here
 DRIVE_CORPORATE_FOLDER_ID=your_corporate_folder_id_here
 ```
 
-### Step 3: Configure Google Drive & Credentials
-- Place your Service Account JSON key in the root directory and name it `credentials.json` (or map it accurately in the `.env`).
-- Create two distinct folders in Google Drive: one for RFPs and one for Corporate Memory. Update the `.env` file with their respective IDs.
+### Step 3: Google Drive & Credentials
+- Place your Service Account JSON key in the root directory and name it `credentials.json`.
+- Create two folders in Google Drive: one for RFPs and one for Corporate Memory. Update the `.env` file with their IDs.
 
-### Step 4: Generate Mock Data (Optional)
-If you are testing locally and want to populate the system with mock engineering data, run the automated setup scripts:
+---
+
+## Running Locally (Without Docker)
+
+To run the project natively, you must start the backend and frontend separately.
+
+### 1. Start the FastAPI Backend
+Open a terminal in the root directory:
 ```bash
-pip install -r requirements.txt
-python scripts/generate_corporate_docs.py
-python scripts/generate_rfp_docs.py
-```
-*Note: The auto-indexer will automatically synchronize these into ChromaDB on backend startup.*
+# Create and activate a virtual environment
+python -m venv venv
+# On Windows: .\venv\Scripts\activate
+# On Mac/Linux: source venv/bin/activate
 
-### Step 5: Start the Platform
-Start the FastAPI backend and Streamlit frontend using Docker:
+# Install dependencies
+pip install -r requirements.txt
+
+# Start the server
+python -m uvicorn src.api.main:app --host 0.0.0.0 --port 8000 --env-file .env
+```
+The backend API will be available at `http://localhost:8000`.
+
+### 2. Start the React Frontend
+Open a new terminal and navigate to the `frontend` directory:
+```bash
+cd frontend
+
+# Install dependencies
+npm install
+
+# Start the development server
+npm run dev
+```
+Access the application UI via `http://localhost:5173`.
+
+---
+
+## Running Locally (With Docker)
+
+If you prefer a fully containerized environment, you can use Docker Compose to spin up both the frontend and backend simultaneously.
+
 ```bash
 docker-compose up --build
 ```
-Access the application UI via `http://localhost:8501`.
+- The **Frontend** will be available at `http://localhost:5173`.
+- The **Backend API** will be available at `http://localhost:8000`.
+
+---
 
 ## Security Features
 
 TenderMind AI was built with a "Defense in Depth" security philosophy:
 
-- **Human-In-The-Loop (HITL) Guardrails:** The ADK Orchestrator halts execution after the Legal Agent concludes its analysis. The user is presented with a prominent "⚠️ Human Validation Required" guardrail in the UI. The Bid Writer Agent is fundamentally blocked from executing until explicit human approval is received regarding the identified legal risks.
+- **Human-In-The-Loop (HITL) Guardrails:** The ADK Orchestrator halts execution after the Legal Agent concludes its analysis. The user is presented with the Analyst Findings, Strategic Alignment, and Legal Risks. The Bid Writer Agent is fundamentally blocked from executing until explicit human approval is received.
+- **State Isolation:** Agents cannot corrupt each other's memory. State mutations are managed strictly by the Orchestrator.
 - **Fail-Fast Startup:** The backend validates the presence of critical environment variables (`GEMINI_API_KEY`, `GOOGLE_APPLICATION_CREDENTIALS`) on startup, preventing the application from running in an insecure state.
-- **Directory Traversal Protection:** All downloaded Google Drive files are strictly sanitized (`os.path.basename`) and path-checked to ensure files are rigidly confined to their intended destination directories.
 - **Input Validation:** All FastAPI endpoints utilize Pydantic field validators to strictly reject malformed requests.
-
-## Deployment
-
-TenderMind AI is fully containerized and **Google Cloud Run** ready. The included `Dockerfile` and multi-service architecture support immediate deployment to scalable cloud infrastructure without modification to the core business logic.
