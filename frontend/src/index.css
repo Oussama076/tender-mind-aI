@@ -1,0 +1,129 @@
+@import "tailwindcss";
+@plugin "@tailwindcss/typography";
+
+@theme {
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+
+  --color-brand-50:  #eff6ff;
+  --color-brand-100: #dbeafe;
+  --color-brand-200: #bfdbfe;
+  --color-brand-300: #93c5fd;
+  --color-brand-400: #60a5fa;
+  --color-brand-500: #3b82f6;
+  --color-brand-600: #2563eb;
+  --color-brand-700: #1d4ed8;
+  --color-brand-800: #1e40af;
+  --color-brand-900: #1e3a8a;
+  --color-brand-950: #172554;
+}
+
+/* ---- Base layer ---- */
+@layer base {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-[#09090b] text-zinc-100 font-sans antialiased;
+  }
+
+  /* Custom scrollbar */
+  ::-webkit-scrollbar {
+    @apply w-1.5;
+  }
+  ::-webkit-scrollbar-track {
+    @apply bg-transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    @apply bg-zinc-700/50 rounded-full;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-zinc-600;
+  }
+}
+
+/* ---- Reusable component classes ---- */
+@layer components {
+  .card {
+    @apply bg-[#18181b] border border-[#27272a] rounded-xl shadow-lg;
+  }
+
+  .glass-panel {
+    @apply bg-zinc-900/80 backdrop-blur-xl border-r border-zinc-800/60;
+  }
+
+  .btn-primary {
+    @apply bg-brand-600 hover:bg-brand-500 active:bg-brand-700
+           text-white font-medium py-2.5 px-5 rounded-lg
+           transition-all duration-200 ease-out
+           shadow-md shadow-brand-600/20 hover:shadow-lg hover:shadow-brand-500/25
+           focus:outline-none focus:ring-2 focus:ring-brand-500 focus:ring-offset-2 focus:ring-offset-[#09090b]
+           disabled:opacity-40 disabled:cursor-not-allowed disabled:shadow-none disabled:hover:bg-brand-600;
+  }
+
+  .btn-ghost {
+    @apply bg-transparent hover:bg-zinc-800 active:bg-zinc-700
+           text-zinc-400 hover:text-zinc-200 font-medium py-2.5 px-5 rounded-lg
+           transition-all duration-200 ease-out border border-zinc-800 hover:border-zinc-700
+           focus:outline-none focus:ring-2 focus:ring-zinc-600 focus:ring-offset-2 focus:ring-offset-[#09090b];
+  }
+
+  .btn-danger {
+    @apply bg-transparent hover:bg-red-600 active:bg-red-700
+           text-zinc-400 hover:text-white font-medium py-2.5 px-5 rounded-lg
+           transition-all duration-200 ease-out border border-zinc-700 hover:border-red-600
+           hover:shadow-lg hover:shadow-red-600/20
+           focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 focus:ring-offset-[#09090b];
+  }
+
+  .btn-success {
+    @apply bg-emerald-600 hover:bg-emerald-500 active:bg-emerald-700
+           text-white font-medium py-2.5 px-5 rounded-lg
+           transition-all duration-200 ease-out
+           shadow-md shadow-emerald-600/20 hover:shadow-lg hover:shadow-emerald-500/25
+           focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 focus:ring-offset-[#09090b]
+           disabled:opacity-40 disabled:cursor-not-allowed disabled:shadow-none;
+  }
+
+  .input-field {
+    @apply w-full bg-zinc-800/60 border border-zinc-700/60 text-zinc-100 text-sm rounded-lg
+           placeholder:text-zinc-500
+           focus:ring-2 focus:ring-brand-500 focus:border-brand-500 focus:outline-none focus:bg-zinc-800
+           block p-3 transition-all duration-200;
+  }
+
+  .select-field {
+    @apply w-full bg-zinc-800/60 border border-zinc-700/60 text-zinc-100 text-sm rounded-lg
+           focus:ring-2 focus:ring-brand-500 focus:border-brand-500 focus:outline-none focus:bg-zinc-800
+           block p-3 appearance-none cursor-pointer transition-all duration-200;
+  }
+
+  /* Loading pulse overlay for cards */
+  .loading-pulse {
+    position: relative;
+    overflow: hidden;
+  }
+  .loading-pulse::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(59, 130, 246, 0.06) 50%,
+      transparent 100%
+    );
+    animation: shimmer 2s infinite;
+  }
+
+  @keyframes shimmer {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+  }
+}

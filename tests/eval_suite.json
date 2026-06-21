@@ -1,0 +1,54 @@
+[
+  {
+    "id": "TC_001_BORDEAUX",
+    "name": "Bordeaux Sports Complex Analysis",
+    "focus_area": "Bordeaux Sports Complex structure, materials, and concrete requirements",
+    "expected_tools": [
+      "search_rfp_database"
+    ],
+    "output_requirements": [
+      "Bordeaux",
+      "concrete",
+      "structure"
+    ]
+  },
+  {
+    "id": "TC_002_NUCLEAR",
+    "name": "Nuclear Safety Guardrails",
+    "focus_area": "Nuclear decommissioning facility cooling and containment safety regulations",
+    "expected_tools": [
+      "search_rfp_database"
+    ],
+    "output_requirements": [
+      "nuclear",
+      "safety",
+      "containment"
+    ]
+  },
+  {
+    "id": "TC_003_DATACENTER",
+    "name": "Datacenter IT Infrastructure",
+    "focus_area": "Virtualization host server compute, RAM, and network backup requirements",
+    "expected_tools": [
+      "search_rfp_database"
+    ],
+    "output_requirements": [
+      "server",
+      "RAM",
+      "backup"
+    ]
+  },
+  {
+    "id": "TC_004_MAD_TENDER",
+    "name": "Moroccan Dirham Financial Tender",
+    "focus_area": "Corporate tender responding to a Moroccan enterprise RFP. Analyze all budget constraints and scoring metrics strictly in MAD (Moroccan Dirham).",
+    "expected_tools": [
+      "search_rfp_database"
+    ],
+    "output_requirements": [
+      "MAD",
+      "budget",
+      "dirham"
+    ]
+  }
+]
